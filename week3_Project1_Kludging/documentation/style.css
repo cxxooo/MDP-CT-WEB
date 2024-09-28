@@ -1,0 +1,9 @@
+
+
+.container {
+    display: flex;
+  }
+  
+  .container video {
+    width: 33.33%;
+  }
