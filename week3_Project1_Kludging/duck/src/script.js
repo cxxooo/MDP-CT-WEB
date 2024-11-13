@@ -39,7 +39,7 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 const axesHelper = new THREE.AxesHelper(15);
-scene.add(axesHelper);
+//scene.add(axesHelper);
 
 /**
  * Water
@@ -150,7 +150,10 @@ materialTestMAT2.wireframe = true;
 const cone = new THREE.Mesh(goneGeometry, materialTestMAT2);
 
 cone.position.set(7, 5, 0);
-scene.add(testShaderMesh, testMesh, torus,cone);
+//scene.add(testShaderMesh);
+//scene.add(testMesh);
+//scene.add(torus);
+//jjscene.add(cone);
 
 //     // Geometry
 // const waterGeometry = new THREE.PlaneGeometry(2, 2, 512, 512)
