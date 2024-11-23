@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My First Webserver</title>
+  </head>
+  <body>
+    <div id="app">
+      <button id="start">Fetch Text</button>
+
+      <input type="radio" id="ngrams" name="choice" checked>
+      <label for="ngrams">Ngrams</label>
+      <input type="radio" id="words" name="choice">
+      <label for="words">Words</label>
+
+      <br>
+      <input type="text" id="prompt">
+      <button id="generate">Generate Text</button>
+      <br>
+      <p id="output"></p>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,96 @@
+@font-face {
+    font-family: 'Celias';
+    src: url('assets/fonts/Celias-Medium.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+a {
+  color:black;
+}
+
+a:focus,
+button:focus,
+input:focus,
+textarea:focus {
+outline: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+ ::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: black;
+  right:1px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: black;
+}
+
+
+body,html {
+  background-color: black;
+  height: 100%;
+  user-select: none;
+  width:100%;
+  min-height: 600px;
+  margin:0px auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
+}
+
+#footer {
+  position: fixed;
+  text-align: center;
+  z-index: 997;
+  top:100%;
+  width:100%;
+  margin: 0px auto;
+  margin-top:-70px;
+
+}
+
+p {
+  color:black;
+  font-family: 'Celias', monospace;
+  z-index: 999;
+  font-size: 1em;
+  line-height: 1.9em;
+  vertical-align: middle;
+  margin-bottom:1em;
+}
+
+#footerCredit {
+  text-align: center;
+  margin: 0px auto;
+}
+
+@media screen and (max-width: 600px) {
+  p {
+    font-size: 0.8em;
+  }
+  #footer {
+    margin-top:-40px;
+  }
+  
+}
