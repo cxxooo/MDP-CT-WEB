@@ -117,3 +117,7 @@ function generateTextUsingWords(){
 startBtn.addEventListener('click', fetchText)
 generateBtn.addEventListener('click', generateText)
 saveBtn.addEventListener('click', outputHumanPolish)
+
+// Made me think about rain
+// And sadness
+// And pretty flowers
