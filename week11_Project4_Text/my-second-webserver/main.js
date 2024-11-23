@@ -1,6 +1,8 @@
 import './style.css'
  
 let order = 3;
+
+let sonnetData = [];
 let ngrams = {};
 const startBtn = document.getElementById('start');
 const generateBtn = document.getElementById('generate')
@@ -14,47 +16,60 @@ const humanIconImg = document.getElementById('rightIcon')
 const robotIconImg = document.getElementById('leftIcon')
 
 let countHumanTextArrayLength = 0;
+let countSaveNum = 0;
+let allHumanText = [];
 
 function outputHumanPolish(){
   let inputPolish = document.getElementById('fix').value;
   archive.innerHTML += '<br>' + inputPolish;
+  
   humanIconImg.src = "./img/robotIcon.png";
+  
+  [countSaveNum] = inputPolish;
   countHumanTextArrayLength +=1;
-  //archiveHumanPolishText();
-}
+  countSaveNum +=1;
+  console.log(allHumanText);
 
-function archiveHumanPolishText(){
-  let allHumanText = [];
   for( let i = 0; i< countHumanTextArrayLength; i++){
     allHumanText[i] = inputPolish;
+    console.log(allHumanText[i]);
   }
-  console.log(allHumanText)
+  // console.log(allHumanText);
+  processText(allHumanText)
 }
 
-function fetchAndProcessText(){
+
+function fetchText(){
   fetch("https://poetrydb.org/author,title/Shakespeare;Sonnet")
   .then(response => response.json())
   .then(sonnets =>{
-    //console.log(sonnets)
     sonnets.forEach(sonnet => {
       sonnet.lines.forEach(line =>{
         line = line.toLowerCase().replace(/["'`,!?;.:]/g, '');
         if(!line) return //skip empty lines
-        if(ngramsOverWords){ // using ngrams
-          for(let i =0; i<line.length - order;i++){
-            let gram = line.substring(i, i+3)
-            if(!ngrams[gram])ngrams[gram]=[] // make a library of every ngrams
-
-            ngrams[gram].push(line.charAt(i+order))
-          }
-        }else{//using words
-
-        }
+        sonnetData.push(line);
       })
-    });
-    console.log(ngrams)
-  })// end of .then
+    })
+
+    processText(sonnetData);
+  })
   .catch(error => console.log(error))
+}
+
+function processText(_inputarray){
+  _inputarray.forEach(line =>{
+    if(ngramsOverWords){ // using ngrams
+      for(let i =0; i<line.length - order;i++){
+        let gram = line.substring(i, i+3)
+        if(!ngrams[gram])ngrams[gram]=[] // make a library of every ngrams
+        ngrams[gram].push(line.charAt(i+order))
+      }
+    }
+    else{//using words
+
+    }
+  })
+  console.log(ngrams)  
 }
 
 function generateText(){
@@ -99,6 +114,6 @@ function generateTextUsingWords(){
 
 }
 
-startBtn.addEventListener('click', fetchAndProcessText)
+startBtn.addEventListener('click', fetchText)
 generateBtn.addEventListener('click', generateText)
 saveBtn.addEventListener('click', outputHumanPolish)
