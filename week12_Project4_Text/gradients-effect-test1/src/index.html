@@ -7,7 +7,28 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
+    <div id="left">
+        <br>
+        <img src = "img/robotIcon.png" alt = "robot icon" width="100" height="100">
+        <br>
+        <br>
+        <button id="start">Fetch Text</button>
+        <input type="radio" id="ngrams" name="choice" checked>
+        <label for="ngrams">Ngrams</label>
+        <!-- <input type="radio" id="words" name="choice">
+        <label for="words">Words</label> -->
+        <br>
+        <input type="text" id="prompt">
+        <button id="generate">Generate Text</button>
+        <br>
+        <p id="output"></p>
+    </div>
+    
     <canvas class="webgl"></canvas>
+    <div class = "point point-0">
+        <div class="label">1</div>
+        <div class="text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad incidunt accusantium quo architecto magnam ipsa veniam, hic veritatis. Iure earum cupiditate corporis voluptate cum! Doloremque reprehenderit velit voluptatibus quod a.</div>
+    </div>
     <script type="module" src="./script.js"></script>
 </body>
 </html>

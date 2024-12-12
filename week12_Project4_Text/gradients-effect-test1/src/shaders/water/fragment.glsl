@@ -13,11 +13,3 @@ void main(){
      
      #include <colorspace_fragment>
 }
-
-// void main(){
-//    //gl_FragColor = vec4(0.5, 0.8, 1.0, 1.0);
-//    gl_FragColor = vec4(vUv, 0.0, 1.0);
-   
-//    // the lastest versions of three.js, need to output the colors in srgb color space.
-//     #include <colorspace_fragment>
-// }

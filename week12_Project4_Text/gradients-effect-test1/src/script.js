@@ -18,7 +18,7 @@ console.log(pallete);
  */
 
 // Debug
-const gui = new GUI({ width: 340 })
+// const gui = new GUI({ width: 340 })
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -35,7 +35,7 @@ scene.background = new THREE.Color(0xffffff);
  * Water
  */
 // Geometry
-const waterGeometry = new THREE.PlaneGeometry(2, 2, 128, 128)
+const waterGeometry = new THREE.PlaneGeometry(3, 3, 256, 256)
 
 // Material
 //const waterMaterial = new THREE.MeshBasicMaterial()
@@ -84,7 +84,8 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(70, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(0, 1, 0.4)
+//camera.position.set(0, 1, 0.4)
+camera.position.set(0, 0.5, 0)
 scene.add(camera)
 
 // Controls
