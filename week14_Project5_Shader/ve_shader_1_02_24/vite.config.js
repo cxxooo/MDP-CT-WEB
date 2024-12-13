@@ -4,7 +4,8 @@ import glsl from 'vite-plugin-glsl'
 export default {
     root: 'src/',
     publicDir: '../static/',
-    base: './',
+    base: '/MDP-CT-WEB/week14_Project5_Shader/ve_shader_1_02_24/',
+    // base: './',
     server:
     {
         host: true, // Open to local network and display URL
