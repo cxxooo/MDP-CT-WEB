@@ -1,6 +1,6 @@
 import * as THREE from '../node_modules/three';
-import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js'
-import GUI from '../node_modules/lil-gui';
+import { OrbitControls } from './node_modules/three/examples/jsm/controls/OrbitControls.js'
+import GUI from './node_modules/lil-gui';
 import testVertexShader from './shaders/water/vertex.glsl';
 import testFragmentShader from './shaders/water/fragment.glsl';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js'
