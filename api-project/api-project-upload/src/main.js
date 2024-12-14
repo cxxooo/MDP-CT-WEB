@@ -2,6 +2,9 @@ import './style.css'
 import javascriptLogo from './javascript.svg'
 import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.js'
+//import robotImg from './icons/robotIcon.png'
+//import humanImg from './icons/humanIcon.png'
+
 
 
 let order = 3;
@@ -22,7 +25,7 @@ let countHumanTextArrayLength = 0;
 function outputHumanPolish(){
   let inputPolish = document.getElementById('fix').value;
   archive.innerHTML += '<br>' + inputPolish;
-  humanIconImg.src = "./img/robotIcon.png";
+  humanIconImg.src = "../src/icons/robotIcon.png";
   countHumanTextArrayLength +=1;
   //archiveHumanPolishText();
 }
@@ -64,7 +67,7 @@ function fetchAndProcessText(){
 function generateText(){
   if(ngramsOverWords){
     generateTextUsingNgrams();
-    humanIconImg.src = "./img/humanIcon.png"
+    humanIconImg.src = "../src/icons/humanIcon.png"
   }
   else{
     generateTextUsingWords()
