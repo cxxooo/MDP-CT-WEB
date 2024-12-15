@@ -196,8 +196,8 @@
                     process of writing from the basic frame and doing lots of small tests looks tedious, it does make
                     the
                     whole process more efficient from the bigger scale.</p>
-                    <p>At this time, we can improve the post-processing shader.</p>
-                    <pre>
+                <p>At this time, we can improve the post-processing shader.</p>
+                <pre>
     const postQuad = new THREE.Mesh(
         new THREE.PlaneGeometry(2, 2),
         new THREE.ShaderMaterial({
@@ -211,108 +211,250 @@
         <div class="grid-container">
             <img src="image/details/f.png" alt="f">
             <div class="code-container">
-                <p></p>
+                <p>After adding the current, we can also add the previous. Then, we can mix these two layers' color to
+                    create the after effect.</p>
                 <pre>
+    const postQuad = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        new THREE.ShaderMaterial({
+            uniforms:{
+            ...
+            prev:{value:null},
+            start:{value:0},
+            time:{value:0},
+            translate:{value:0}
+            },
+            vertexShader: `
+            ...
+             `,
+            fragmentShader: `
+            uniform sampler2D current;
+            uniform sampler2D prev;
+            varying vec2 vUv;
+            void main(){
+                ...
+                    
+                vec4 currentColor = texture2D(current, uv);
+                vec4 prevColor = texture2D(prev,vUv);
+                    
+                vec4 color = vec4(mix( prevColor.rgb, currentColor.rgb, 0.05), 1.0);
+                gl_FragColor = color;
+                //gl_FragColor = vec4(vUv, 0.0, 1.0);
+                }`
+            })
+        )
+    orthoScene.add(postQuad);            
    </pre>
+                <p>You can adjust the after effect by tweaking the number. In my code, I like the 0.05 effect.</p>
+                <pre>
+    vec4 color = vec4(mix( prevColor.rgb, currentColor.rgb, 0.05), 1.0);</pre>
             </div>
         </div>
+
         <div class="grid-container">
             <img src="image/details/g.png" alt="g">
             <div class="code-container">
-                <p></p>
+                <p>I also try to inverse the position of prevColor.rgb and currentColor.rgb in vec4 color, testing what
+                    will happen. Here is the screenshot of other effect.</p>
                 <pre>
+    vec4 color = vec4(mix( prevColor.rgb, currentColor.rgb, 0.01), 1.0);
     </pre>
             </div>
         </div>
         <div class="grid-container">
             <img src="image/details/h.png" alt="h">
             <div class="code-container">
-                <p> </p>
+                <p>Then, I add the start and the time, trying to create a new effect to connect different effects. It's
+                    like a movie transfer.</p>
                 <pre>
+    const postQuad = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        new THREE.ShaderMaterial({
+            uniforms:{
+            ...
+            start:{value:0},
+            ...
+            },
+            vertexShader: `
+            ...
+            `,
+            fragmentShader: `
+            ...
+            uniform float start;
+            ...
+            void main(){
+                ...
+                vec2 uv = vUv;
+                uv -= vec2(0.5);
+                uv.y += translate;
+                uv /= 4.;
+                                    
+                uv += vec2(0.5);
+                                    
+                uv = mix(vUv,uv, start);
+                ...              
+                }`
+            })
+        )
+    ...
     </pre>
             </div>
         </div>
+
         <div class="grid-container">
             <img src="image/details/i.png" alt="i">
             <div class="code-container">
-                <p></p>
+                <p>I use the sin and cos functions to create a distorted vision.</p>
                 <pre>
-    </pre>
+    const postQuad = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        new THREE.ShaderMaterial({
+            uniforms:{
+            ...
+            time:{value:0},
+            translate:{value:0}
+            },
+            vertexShader: `
+            ...
+            `,
+            fragmentShader: `
+            ...
+            uniform float time;
+            uniform float translate;
+            ...
+            void main(){
+            float PI = 3.14159265359;
+            ...
+            uv *= vec2(2., 1.);
+            uv.y += translate;
+            uv /= 4.;
+                                                                
+            uv.x += sin(uv.y * PI * 4. + time*0.3)*0.15;
+            uv.x += sin(uv.y * PI * 16. + time*0.5)*0.15;
+            ...              
+            }`
+        })
+    )
+    ...
+                    </pre>
             </div>
         </div>
         <div class="grid-container">
             <img src="image/details/j.png" alt="j">
             <div class="code-container">
-                <p></p>
-                <pre>
-    </pre>
+                <p>Continue to tweak the num and get a pretty crazy distorted one. Just a record and I did not apply
+                    this effect in final code.</p>
             </div>
         </div>
+
         <div class="grid-container">
             <img src="image/details/k.png" alt="k">
             <div class="code-container">
-                <p></p>
+                <p>In this part, I use the glsl noise and glsl rotation, applying these in the shader of the head model
+                    material.</p>
+                <p>Also, create a noise.glsl to store the noise code. and input them by
+                </p>
                 <pre>
+    #include noise.glsl;
+                </pre>
+                <p>In vertex.glsl:</p>
+                <pre>
+    uniform float time;
+    varying vec2 vUv;
+    varying vec3 vPosition;
+    varying vec3 vNormal;
+    uniform vec2 pixels;
+    uniform float triScale;
+    attribute vec3 center;
+    #include noise.glsl;
+    float PI = 3.141592653589793238;
+                    
+    void main(){
+        vUv = uv;
+        vNormal = normal;
+                    
+        vec3 pos = position;
+                    
+        pos = (pos - center) * triScale + center;
+                    
+        float noise = cnoise(vec4(pos, time*0.4)*0.1);
+                    
+        float rotation = noise * PI * 0.1;
+        pos = rotate(pos, vec3(1.,0.,0.), rotation);
+        pos = rotate(pos, vec3(0.,1.,0.), rotation);
+        pos = rotate(pos, vec3(0.,1.,1.), rotation);
+                    
+        float scale = 1.0 + noise*0.05;
+        pos *= scale;
+                    
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+    }
     </pre>
+
             </div>
         </div>
         <div class="grid-container">
             <img src="image/details/l.png" alt="l">
             <div class="code-container">
-                <p></p>
-                <pre>
-    </pre>
+                <p>Tweak the noise size to fit the model. I mainly adjust the num that is multiplying in float rotation and float scale.</p>
+<pre>
+    float rotation = noise * PI * 0.1;
+    pos = rotate(pos, vec3(1.,0.,0.), rotation);
+    pos = rotate(pos, vec3(0.,1.,0.), rotation);
+    pos = rotate(pos, vec3(0.,1.,1.), rotation);
+                
+    float scale = 1.0 + noise*0.05;
+    pos *= scale;
+</pre>
             </div>
         </div>
         <div class="grid-container">
             <img src="image/details/m.png" alt="m">
             <div class="code-container">
-                <p></p>
-                <pre>
-    </pre>
-            </div>
-        </div>
-        <div class="grid-container">
-            <img src="image/details/n.png" alt="n">
-            <div class="code-container">
-                <p></p>
-                <pre>
+                <p>Add the transform, connecting the mosaic effect and the triangle effect. In vertex.glsl:</p>
+<pre>
+    // TRIANGLE
+    ...
+    // PIXELATED
+    vec3 posPixelated = floor(pos * mosaic +0.5) / mosaic;
+    pos = mix(pos, posPixelated, transformProgress);
+    ...
     </pre>
             </div>
         </div>
         <div class="grid-container">
             <img src="image/details/o.png" alt="o">
             <div class="code-container">
-                <p></p>
+                <p>Use the backOut function. In this case, when the model transforming, the pixelated effect will become a little bigger and then back to the original size.</p>
                 <pre>
+    float backout(float progress, float swing)
+    {
+        float p = progress - 1.;
+        return (p * p * ((swing + 1.) * p + swing) + 1.);
+    }
+                
     </pre>
             </div>
         </div>
         <div class="grid-container">
             <img src="image/details/p.png" alt="p">
             <div class="code-container">
-                <p></p>
-                <pre>
-    </pre>
+                <p>Test the pixelated effect.</p>
+
             </div>
         </div>
         <div class="grid-container">
             <img src="image/details/q.png" alt="q">
             <div class="code-container">
-                <p></p>
-                <pre>
-    </pre>
+                <p>Almost done. Tweaking all the GUI and testing all the effect.</p>
             </div>
         </div>
         <div class="grid-container">
             <img src="image/details/r.png" alt="r">
             <div class="code-container">
-                <p></p>
-                <pre>
-    </pre>
+                <p>Finally, I wander around in this space, and I record the demo video.</p>
             </div>
         </div>
-        <p>Dear Maxim, I am still wirting this documentation... Thank you.</p>
     </main>
 
     <script src="script.js"></script>
