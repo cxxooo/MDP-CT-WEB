@@ -1,20 +1,27 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>week14 Project5 Shader</title>
     <style>
-        img{
+
+        img {
             max-width: 100%;
         }
         h1 {
-            text-align: center; 
-        }
-        p{
             text-align: center;
+        
         }
+        p {
+            max-width: 500px;
+            word-wrap: break-word;
+            /* text-align: center;   */
+        }
+    
     </style>
 </head>
+
 <body>
     <header>
 
@@ -34,7 +41,27 @@
         <section id="process">
             <img src="image/2.png">
         </section>
+        <p>------------ specific process ------------</p>
+        <p>After playing the gradient shader effect on a plane, I try apply the same shader on the 3D model. </p>
+        <p> Everything looks good, but I feel like the effect should could be crazier, especially connecting 3D model and animated shader. Thus, I continue to explore more...</p>
+        <section id="startPoint">
+            <img src="image/details/gradientShaderTest.png">
+        </section>
+        <p>Firstly, back to the normal shader.</p>
+        <p>In fragment.glsl: </p>
+        <p>gl_FragColor = vec4(vNormal, 1.0);</p>
+        <section id="a">
+            <img src="image/details/a.png">
+        </section>
+        <p>Empty the index. If enter:</p>
+        <p>console(model.geometry)</p>
+        <p>You can see the details of Geometry. Take my model here as an example. In the content of the console, you can find the index data. You can use the toNonIndexed() to empty the index data. Then, we can remesh the data and play with new datas.</p>
+        <p>Take the triangle shape as an example. </p>
+        <section id="b">
+            <img src="image/details/b.png">
+        </section>
     </main>
     <script src="script.js"></script>
 </body>
+
 </html>
