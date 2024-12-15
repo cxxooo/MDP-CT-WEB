@@ -1,0 +1,87 @@
+/* #left {
+    position: absolute;
+    left:0;
+    width: 50%;
+    height: 100vh;
+    text-align: center;
+  }
+  
+  #right {
+    position: absolute;
+    width:50%;
+    left:50%;
+    height: 100vh;
+    text-align: center;
+  } */
+/* 
+  body {
+    margin: 0;
+    display: flex;
+    place-items: center;
+    min-width: 320px;
+    min-height: 100vh;
+  }
+
+  p{
+    text-align: center;
+  } */
+
+  img {
+    max-width: 100%;
+}
+ /* 
+h1 {
+    text-align: center;
+
+} */
+/* .content {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 20px; 
+    align-items: start; 
+    margin-bottom: 20px;
+}
+
+.content img {
+    max-width: 100%;
+    height: auto; 
+    display: block;
+}
+
+.content p {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+} */
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 40% 60%; /* 左侧图片40%，右侧内容60% */
+    gap: 10px;
+}
+.grid-container img {
+    width: 100%;
+    border-radius: 5px;
+}
+.code-container {
+    display: grid;
+    grid-template-rows: auto 1fr; /* 第一行为自动高度（文本），第二行为剩余空间（代码） */
+    gap: 10px;
+    background: #fff5e8;
+    padding: 10px;
+    border-radius: 5px;
+}
+.code-container p {
+    margin: 0;
+    font-size: 18px;
+    color: #333;
+}
+.code-container pre {
+    white-space: pre-wrap;
+    overflow-x: auto;
+    background: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    line-height: 1.5;
+}

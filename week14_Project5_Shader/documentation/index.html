@@ -4,33 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>week14 Project5 Shader</title>
-    <style>
-        img {
-            max-width: 100%;
-        }
-        h1 {
-            text-align: center;
-        
-        }
-        /* 
-        p {
-            text-align: center; 
-        } */
-    
-    </style>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
     <header>
-
     </header>
     <main>
         <section>
             <h1> Shader as Digital Material</h1>
         </section>
-        <P>Medium: GLSL, JavaScript, Threejs</P>
+        <p>Medium: GLSL, JavaScript, Threejs</p>
         <p>Here is the link of demo video
-            <a href="https://www.youtube.com/watch?v=CY9YSdcEV00&t=3s"> https://www.youtube.com/watch?v=CY9YSdcEV00&t=3s</a>
+            <a href="https://www.youtube.com/watch?v=CY9YSdcEV00&t=3s">
+                https://www.youtube.com/watch?v=CY9YSdcEV00&t=3s</a>
             uploaded on YouTube
         </p>
         <pre>
@@ -50,164 +37,284 @@
             <img src="image/2.png">
         </section>
         <p>------------ specific process ------------</p>
-        <p>After playing the gradient shader effect on a plane, I try apply the same shader on the 3D model. </p>
-        <p> Everything looks good, but I feel like the effect should could be crazier, especially connecting 3D model and animated shader. Thus, I continue to explore more...</p>
-        <section id="startPoint">
-            <img src="image/details/gradientShaderTest.png">
-        </section>
-        <p>Firstly, back to the normal shader.</p>
-        <p>In fragment.glsl: </p>
-        <p>gl_FragColor = vec4(vNormal, 1.0);</p>
-        <section id="a">
-            <img src="image/details/a.png">
-        </section>
-        <p>Empty the index. If enter:</p>
-        <p>console(model.geometry)</p>
-        <p>You can see the details of Geometry. Take my model here as an example. In the content of the console, you can find the data item - index. You can use the toNonIndexed() to empty the index data. Then, we can remesh the data and play with new datas.</p>
-        <p>Take the triangle shape as an example. </p>
-        <pre>       
-            gltf.scene.children[0].geometry = gltf.scene.children[0].geometry.toNonIndexed();
-            gltf.scene.children[0].geometry.center()
-            let pos = gltf.scene.children[0].geometry.attributes.position.array;
-            
-            //calculate center of each triangle
-            let centers = [];
-            for(let i = 0;i < pos.length;i+=9){
-                let centerX = (pos[i] + pos[i+3] + pos[i+6]) /3;
-                let centerY = (pos[i+1] + pos[i+4] + pos[i+7]) /3;
-                let centerZ = (pos[i+2] + pos[i+5] + pos[i+8]) /3;
-    
-                centers.push(centerX,centerY,centerZ);
-                centers.push(centerX,centerY,centerZ);
-                centers.push(centerX,centerY,centerZ);
-            }
-        </pre>
-        <p>At this time, in the console, you can find the new attribute item - centers. Once we get these new center datas, we can use them to build the triangle remesh effect. </p>
-        <p>In vertex.glsl, add:</p>
-        <pre>
-            ...
-            uniform float triScale;
-            attribute vec3 center;
-            ...
+        <div class="grid-container">
+            <img src="image/details/gradientShaderTest.png" alt="Beignning">
+            <div class="code-container">
+                <p>After playing the gradient shader effect on a plane, I try apply the same shader on the 3D model.
+                    <br>Everything looks good, but I feel like the effect should could be crazier, especially connecting
+                    3D model and animated shader. Thus, I continue to explore more...
+                </p>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/a.png" alt="Normal Shader">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/b.png" alt="b">
+            <div class="code-container">
+                <p>Empty the index. If enter:</p>
+                <pre>
+    console(model.geometry)</pre>
+                <p> You can see the details of Geometry. Take my model here as an example. In the content of the
+                    console,
+                    you can find the data item - index. You can use the toNonIndexed() to empty the index data. Then, we
+                    can
+                    remesh the data and play with new datas.</p>
+                <p>Take the triangle shape as an example.</p>
+                <pre>
+    gltf.scene.children[0].geometry = gltf.scene.children[0].geometry.toNonIndexed();
+    gltf.scene.children[0].geometry.center()
+    let pos = gltf.scene.children[0].geometry.attributes.position.array;
+                       
+    //calculate center of each triangle
+    let centers = [];
+    for(let i = 0;i < pos.length;i+=9){
+        let centerX = (pos[i] + pos[i+3] + pos[i+6]) /3;
+        let centerY = (pos[i+1] + pos[i+4] + pos[i+7]) /3;
+        let centerZ = (pos[i+2] + pos[i+5] + pos[i+8]) /3;
+                            
+        centers.push(centerX,centerY,centerZ);
+        centers.push(centerX,centerY,centerZ);
+        centers.push(centerX,centerY,centerZ);
+    }</pre>
+                <p>At this time, in the console, you can find the new attribute item - centers. Once we get these new
+                    center
+                    datas, we can use them to build the triangle remesh effect.</p>
+                <p>In vertex.glsl, add:</p>
+                <pre>
+    ...
+    uniform float triScale;
+    attribute vec3 center;
+    ...
+    void main(){
+        ...
+        vec3 pos = position;
+        pos = (pos - center) * triScale + center;
+        ...
+    }
+                            </pre>
+                <p>Also, renew the gl_FragColor, using pos instead of position:</p>
+                <pre>
+    gl_FragColor = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
+                            </pre>
+                <p>
+                    If add the GUI of triScale, you can real-time check the varying effect, that the model is divided
+                    into
+                    numerous small triangle shape pieces.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid-container">
+            <img src="image/details/c.png" alt="c">
+            <div class="code-container">
+                <p>Check the inside effect of double side material. Experience the strange view angle.</p>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/d.png" alt="d">
+            <div class="code-container">
+                <p>Then, let's add some after effects. Firstly, we could add some render targets. </p>
+                <pre>
+    const sourceRenderTarget = new THREE.WebGLRenderTarget(sizes.width, sizes.height);
+    let renderTarget1 = new THREE.WebGLRenderTarget(sizes.width, sizes.height);
+    let renderTarget2 =new THREE.WebGLRenderTarget(sizes.width, sizes.height);</pre>
+                <p>
+                    In order to check the after effect more conveniently and obviously, let's add a little animation of
+                    the
+                    model. With the simple sin() function, we can let the model keep moving around the original position
+                    point. Here I create the number of the model moving speed beyond the tick() function and named it
+                    headMoveSpeed. It is a good skill and make tweaking number more conveniently. This part of code is
+                    always at the end of the whole js file.
+                </p>
+                <pre>
+    ...
+    const tick = () =>
+    {
+        const elapsedTime = clock.getElapsedTime()
+           
+        if (model) {
+        model.position.x = 0.5 * Math.sin(elapsedTime*headMoveSpeed); 
+        }
+    }
+    ...
+    </pre>
+                <p>
+                    It is not obvious that the model is slowly moving around the original position in the screenshot,
+                    but it
+                    actually moving.
+                </p>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/e.png" alt="e">
+            <div class="code-container">
+                <p>Let's begin to write the post-processing! The post-processing kind of like filter, which always
+                    overlapps
+                    on the visual content like a thin plane, and it will not fundamentally change any construction of
+                    the
+                    visual content inside. </p>
+                <p> Start from the hello world shader pattern, making sure everything is running.</p>
+                <pre>
+    ...
+    setupPostProcessing(){
+        
+    const orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    orthoCamera.position.z = 1;
+    const orthoScene = new THREE.Scene();
+        
+    const postQuad = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        new THREE.ShaderMaterial({
+            vertexShader: `
+            varying vec2 vUv;
             void main(){
+            vUv = uv;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+            `,
+            fragmentShader: `
+            varying vec2 vUv;
+            void main(){
+            gl_FragColor = vec4(vUv, 0.0, 1.0);
+            }                       `
+            })
+        )
+    orthoScene.add(postQuad);
+    }</pre>
+                <p>Switch the render scene and check if the post-processing shader and plane are working.</p>
+                <pre>
+    // renderer.render(scene, camera);
+    renderer.render(orthoScene,orthoCamera);
+        </pre>
+                <p>Although everytime the
+                    process of writing from the basic frame and doing lots of small tests looks tedious, it does make
+                    the
+                    whole process more efficient from the bigger scale.</p>
+                    <p>At this time, we can improve the post-processing shader.</p>
+                    <pre>
+    const postQuad = new THREE.Mesh(
+        new THREE.PlaneGeometry(2, 2),
+        new THREE.ShaderMaterial({
+            uniforms:{
+                current:{value:null},
                 ...
-                vec3 pos = position;
-                pos = (pos - center) * triScale + center;
-                ...
-            }
-        </pre>
-        <p>Also, renew the gl_FragColor, using pos instead of position:</p>
-        <pre>
-            gl_FragColor = projectionMatrix * modelViewMatrix * vec4( pos, 1.0 );
-        </pre>
-        <p>If add the GUI of triScale, you can real-time check the varying effect, that the model is divided into numerous small triangle shape pieces.</p>
-        <section id="b">
-            <img src="image/details/b.png">
-        </section>
-        <p>Check the inside effect of double side material. Experience the strange view angle.</p>
-        <section id="c">
-            <img src="image/details/c.png">
-        </section>
-        <p>Then, let's add some after effects. Firstly, we could add some render targets.</p>
-        <pre>
-            const sourceRenderTarget = new THREE.WebGLRenderTarget(sizes.width, sizes.height);
-            let renderTarget1 = new THREE.WebGLRenderTarget(sizes.width, sizes.height);
-            let renderTarget2 =new THREE.WebGLRenderTarget(sizes.width, sizes.height);
-        </pre>
-        <p>In order to check the after effect more conveniently and obviously, let's add a little animation of the model. With the simple sin() function, we can let the model keep moving around the original position point. Here I create the number of the model moving speed beyond the tick() function and named it headMoveSpeed. It is a good skill and make tweaking number more conveniently. This part of code is always at the end of the whole js file.</p>
-        <pre>
-            ...
-            const tick = () =>
-            {
-                const elapsedTime = clock.getElapsedTime()
-
-                if (model) {
-                model.position.x = 0.5 * Math.sin(elapsedTime*headMoveSpeed); 
-                }
-            }
-            ...
-        </pre>
-        <p>It is not obvious that the model is slowly moving around the original position in the screenshot, but it actually moving.</p>
-        <section id="d">
-            <img src="image/details/d.png">
-        </section>
-       <p>Let's begin to write the post-processing! The post-processing kind of like filter, which always overlapps on the visual content like a thin plane, and it will not fundamentally change any construction of the visual content inside.</p>
-       <p>Start from the hello world shader pattern, making sure everything is running. Although everytime the process of writing from the basic frame and doing lots of small tests looks tedious, it does make the whole process more efficient from the bigger scale.</p>
-        <pre>
-            ...
-            setupPostProcessing(){
-
-                const orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-                orthoCamera.position.z = 1;
-                const orthoScene = new THREE.Scene();
-
-                const postQuad = new THREE.Mesh(
-                    new THREE.PlaneGeometry(2, 2),
-                    new THREE.ShaderMaterial({
-                        vertexShader: `
-                        varying vec2 vUv;
-                        void main(){
-                            vUv = uv;
-                            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-                        }
-                            `,
-                        fragmentShader: `
-                        varying vec2 vUv;
-                        void main(){
-                        gl_FragColor = vec4(vUv, 0.0, 1.0);
-                        }
-                            `
-                    })
-                )
-                orthoScene.add(postQuad);
-            }
-        </pre>
-        <p>To make sure that the post-processing is working. We can </p>
-        <p>Hello World shader pattern!</p>
-        <section id="e">
-            <img src="image/details/e.png">
-        </section>
+            },
+                    </pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/f.png" alt="f">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/g.png" alt="g">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/h.png" alt="h">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/i.png" alt="i">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/j.png" alt="j">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/k.png" alt="k">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/l.png" alt="l">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/m.png" alt="m">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/n.png" alt="n">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/o.png" alt="o">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/p.png" alt="p">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/q.png" alt="q">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
+        <div class="grid-container">
+            <img src="image/details/r.png" alt="r">
+            <div class="code-container">
+                <p>Firstly, back to the normal shader. In `fragment.glsl`, we set: </p>
+                <pre>
+    gl_FragColor = vec4(vNormal, 1.0)</pre>
+            </div>
+        </div>
         <p>Dear Maxim, I am still wirting this documentation... Thank you.</p>
-        <section id="f">
-            <img src="image/details/f.png">
-        </section>
-        <section id="g">
-            <img src="image/details/g.png">
-        </section>
-        <section id="h">
-            <img src="image/details/h.png">
-        </section>
-        <section id="i">
-            <img src="image/details/i.png">
-        </section>
-        <section id="j">
-            <img src="image/details/j.png">
-        </section>
-        <section id="k">
-            <img src="image/details/k.png">
-        </section>
-        <section id="l">
-            <img src="image/details/l.png">
-        </section>
-        <section id="m">
-            <img src="image/details/m.png">
-        </section>
-        <section id="n">
-            <img src="image/details/n.png">
-        </section>
-        <section id="o">
-            <img src="image/details/o.png">
-        </section>
-        <section id="p">
-            <img src="image/details/p.png">
-        </section>
-        <section id="q">
-            <img src="image/details/q.png">
-        </section>
-        <section id="r">
-            <img src="image/details/r.png">
-        </section>
     </main>
+
     <script src="script.js"></script>
 </body>
 
